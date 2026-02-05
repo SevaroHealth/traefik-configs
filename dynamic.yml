@@ -17,7 +17,7 @@ http:
   middlewares:
     nginx-a-ratelimit:
       rateLimit:
-        average: 100
+        average: 99
         burst: 200
 
     nginx-a-retry:
