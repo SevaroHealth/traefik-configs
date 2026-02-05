@@ -4,7 +4,7 @@ http:
       entryPoints: [web]
       rule: "Host(`nginx-server-a.cloud.mysevaro.com`)"
       priority: 2
-      middlewares: [nginx-a-ratelimit, nginx-a-retry]
+      middlewares: [nginx-a-ratelimit, nginx-a-retry, s-waf]
       service: "nginx-server-a@ecs"
 
     nginx-server-a-socketio:
@@ -13,12 +13,6 @@ http:
       priority: 10
       middlewares: [nginx-a-ratelimit, nginx-a-retry]
       service: "nginx-server-a-sticky@ecs"
-  
-  services:
-    nginx-server-a-sticky:
-      loadbalancer:
-        server:
-          port: 80
 
   middlewares:
     nginx-a-ratelimit:
@@ -30,3 +24,10 @@ http:
       retry:
         attempts: 2
         initialInterval: 200ms
+
+    s-waf:
+      waf:
+        plugin:
+          coraza:
+            directives:
+              - SecRuleEngine On
