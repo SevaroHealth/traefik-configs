@@ -1,0 +1,26 @@
+http:
+  routers:
+    nginx-server-a:
+      entryPoints: [web]
+      rule: "Host(`nginx-server-a.cloud.mysevaro.com`)"
+      priority: 2
+      middlewares: [nginx-a-ratelimit, nginx-a-retry]
+      service: "nginx-server-a@ecs"
+
+    nginx-server-a-socketio:
+      entryPoints: [web]
+      rule: "Host(`nginx-server-a.cloud.mysevaro.com`) && PathPrefix(`/socket.io`)"
+      priority: 10
+      middlewares: [nginx-a-ratelimit, nginx-a-retry]
+      service: "nginx-server-a-sticky@ecs"
+
+  middlewares:
+    nginx-a-ratelimit:
+      rateLimit:
+        average: 100
+        burst: 200
+
+    nginx-a-retry:
+      retry:
+        attempts: 3
+        initialInterval: 200ms
