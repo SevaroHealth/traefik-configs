@@ -22,5 +22,5 @@ http:
 
     nginx-a-retry:
       retry:
-        attempts: 3
+        attempts: 2
         initialInterval: 200ms
