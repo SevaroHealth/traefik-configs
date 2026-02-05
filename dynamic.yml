@@ -4,7 +4,7 @@ http:
       entryPoints: [web]
       rule: "Host(`nginx-server-a.cloud.mysevaro.com`)"
       priority: 2
-      middlewares: [nginx-a-ratelimit, nginx-a-retry, waf,http-cache]
+      middlewares: [nginx-a-ratelimit, nginx-a-retry, waf, http-cache]
       service: "nginx-server-a@ecs"
 
     nginx-server-a-socketio:
@@ -29,9 +29,8 @@ http:
       plugin:
         httpCache:
           maxTtl: 600 
-          store:
-            memory:
-              limit: "3Gi"
+          memory:
+            limit: "3Gi"
 
     waf:
       plugin:
