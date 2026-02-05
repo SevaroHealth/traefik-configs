@@ -4,7 +4,7 @@ http:
       entryPoints: [web]
       rule: "Host(`nginx-server-a.cloud.mysevaro.com`)"
       priority: 2
-      middlewares: [nginx-a-ratelimit, nginx-a-retry]
+      middlewares: [nginx-a-ratelimit, nginx-a-retry, waf]
       service: "nginx-server-a@ecs"
 
     nginx-server-a-socketio:
@@ -28,5 +28,13 @@ http:
     waf:
       plugin:
         coraza:
+          crsEnabled: true
           directives:
-            - SecRuleEngine On
+            - SecDefaultAction "phase:1,log,auditlog,deny,status:403"
+            - SecDefaultAction "phase:2,log,auditlog,deny,status:403"
+            - SecAction "id:900110, phase:1, pass, t:none, nolog, setvar:tx.inbound_anomaly_score_threshold=5, setvar:tx.outbound_anomaly_score_threshold=4"
+            - SecAction "id:900200, phase:1, pass, t:none, nolog, setvar:'tx.allowed_methods=GET'"
+            - Include @owasp_crs/REQUEST-911-METHOD-ENFORCEMENT.conf
+            - Include @owasp_crs/REQUEST-949-BLOCKING-EVALUATION.conf
+
+            
